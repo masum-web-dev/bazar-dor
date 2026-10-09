@@ -11,7 +11,9 @@ const Hero = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 items-center gap-8">
-                    <div className="lg:col-span-7 flex flex-col justify-center space-y-4 text-center lg:text-left h-full">
+                    
+                    {/* বামপাশের টেক্সট ডিভ */}
+                    <div className="lg:col-span-7 flex flex-col justify-center space-y-4 text-center lg:text-left h-full animate-fade-in-left">
                         <div className="inline-block bg-[#e8f5e9] text-[#0c833d] px-3 py-1 rounded-full text-xs font-semibold w-fit mx-auto lg:mx-0">
                             মঙ্গলবারের বাজার দর
                         </div>
@@ -31,13 +33,15 @@ const Hero = () => {
                         </div>
                     </div>
 
+                    {/* ডানপাশের ছবি ডিভ */}
                     <div className="lg:col-span-5 flex items-center justify-center">
-                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 -mt-4 sm:-mt-6">
+                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 -mt-4 sm:-mt-6 animate-float">
                             <Image
                                 src="/bazar-hero.png"
                                 alt="বাজার দর ইলাস্ট্রেশন"
                                 fill
-                                className="object-contain"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 384px"
+                                className="object-contain drop-shadow-lg"
                                 priority
                             />
                         </div>

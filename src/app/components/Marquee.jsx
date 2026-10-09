@@ -1,5 +1,15 @@
 import { Suspense } from "react";
 
+// ইংরেজি সংখ্যাকে বাংলায় রূপান্তর করার ফাংশন
+const convertToBengaliNumber = (num) => {
+    if (num === undefined || num === null) return "";
+    const englishToBengali = {
+        '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+        '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯', '.': '.'
+    };
+    return num.toString().split('').map(char => englishToBengali[char] || char).join('');
+};
+
 async function MarqueeContent() {
     const res = await fetch("https://api.abcz.workers.dev/api/bazardor/products", {
         cache: "force-cache",
@@ -30,10 +40,10 @@ async function MarqueeContent() {
                     >
                         <span>{item.image || item.categoryIcon || "🛒"}</span>
                         <span className="font-semibold text-base-content">{item.nameBn}</span>
-                        <span className="text-base-content/70">৳{item.today} টাকা/{item.unit}</span>
-                        <span className={`font-bold flex items-center gap-0.5 ${item.change.dir === 'up' ? 'text-success' : 'text-error'}`}>
+                        <span className="text-base-content/70">৳{convertToBengaliNumber(item.today)} টাকা/{item.unit}</span>
+                        <span className={`font-bold flex items-center gap-0.5 ${item.change.dir === 'up' ? 'text-error' : 'text-[#0c833d]'}`}>
                             <span>{item.change.dir === 'up' ? '▲' : '▼'}</span>
-                            <span>{item.change.pct}%</span>
+                            <span>{convertToBengaliNumber(item.change.pct)}%</span>
                         </span>
                     </div>
                 ))}
