@@ -11,14 +11,15 @@
   "dependencies": {
     "next": "16.4.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-fast-marquee": "^1.6.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "babel-plugin-react-compiler": "1.0.0",
     "daisyui": "^5.7.47",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "^14.2.35",
     "tailwindcss": "^4"
   }
 }
