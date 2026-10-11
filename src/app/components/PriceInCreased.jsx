@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 
 const convertToBengaliNumber = (num) => {
     if (num === undefined || num === null) return "";
@@ -9,26 +10,11 @@ const convertToBengaliNumber = (num) => {
     return num.toString().split('').map(char => englishToBengali[char] || char).join('');
 };
 
-const getCategoryIcon = (category) => {
-    switch (category) {
-        case 'chal': return '🍚';
-        case 'dal': return '🫘';
-        case 'tel': return '🧴';
-        case 'sobji': return '🥦';
-        case 'mach': return '🐟';
-        case 'mangsho': return '🥩';
-        case 'dim': return '🥚';
-        case 'mosla': return '🧄';
-        default: return '🛒';
-    }
-};
-
 async function PriceInCreased() {
     const res = await fetch("https://api.abcz.workers.dev/api/bazardor/products", {
         cache: "force-cache",
     });
     const products = await res.json();
-    console.log(products);
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -42,13 +28,14 @@ async function PriceInCreased() {
                         .filter(product => product.change.dir === 'up')
                         .slice(0, 6)
                         .map(product => (
-                            <div 
+                            <Link 
                                 key={product.id}
-                                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between"
+                                href={`/products/${product.id}`}
+                                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md cursor-pointer"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-2xl shrink-0">
-                                        {getCategoryIcon(product.category)}
+                                        {product.image || product.categoryIcon || "🛒"}
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-gray-800 text-base">{product.nameBn}</h3>
@@ -67,7 +54,7 @@ async function PriceInCreased() {
                                         <span>{convertToBengaliNumber(product.change.pct)}%</span>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))
                 }
             </div>

@@ -11,7 +11,7 @@ const Hero = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 items-center gap-8">
-                    
+
                     {/* বামপাশের টেক্সট ডিভ */}
                     <div className="lg:col-span-7 flex flex-col justify-center space-y-4 text-center lg:text-left h-full animate-fade-in-left">
                         <div className="inline-block bg-[#e8f5e9] text-[#0c833d] px-3 py-1 rounded-full text-xs font-semibold w-fit mx-auto lg:mx-0">
@@ -24,12 +24,12 @@ const Hero = () => {
                             চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।
                         </p>
                         <div className="pt-2">
-                            <Link 
-                                href="/products" 
+                            <a
+                                href="#all-products"
                                 className="inline-flex items-center justify-center bg-[#0c833d] hover:bg-[#0a6c32] text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 shadow-sm"
                             >
                                 সব পণ্য দেখুন
-                            </Link>
+                            </a>
                         </div>
                     </div>
 

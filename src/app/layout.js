@@ -1,8 +1,10 @@
 import { Geist, Geist_Mono, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/Navbar";
-import CatgoriesNavbar from "./components/CatgoriesNavbar";
 import Marque from "./components/Marquee";
+import Footer from "./components/Footer";
+import CategoryNavbar from "./components/CategoryNavbar";
+
 
 
 
@@ -35,11 +37,12 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col font-sans">
         <NavBar></NavBar>
-        <CatgoriesNavbar></CatgoriesNavbar>
+        <CategoryNavbar></CategoryNavbar>
         <Marque></Marque>
         <main>
           {children}
         </main>
+        <Footer></Footer>
       </body>
     </html>
   );

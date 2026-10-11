@@ -1,6 +1,6 @@
 import { Suspense } from "react";
+import Link from "next/link";
 
-// ইংরেজি সংখ্যাকে বাংলায় রূপান্তর করার ফাংশন
 const convertToBengaliNumber = (num) => {
     if (num === undefined || num === null) return "";
     const englishToBengali = {
@@ -34,18 +34,22 @@ async function MarqueeContent() {
             `}</style>
             <div className="animate-custom-marquee">
                 {[...marqueeData, ...marqueeData].map((item, index) => (
-                    <div 
+                    <Link 
                         key={`${item.id}-${index}`} 
-                        className="inline-flex items-center gap-2 px-6 border-r border-base-300 text-sm shrink-0"
+                        href={`/products/${item.id}`}
+                        className="inline-flex items-center gap-2 px-6 border-r border-base-300 text-sm shrink-0 cursor-pointer group transition-colors"
                     >
                         <span>{item.image || item.categoryIcon || "🛒"}</span>
-                        <span className="font-semibold text-base-content">{item.nameBn}</span>
+                        <span className="font-semibold text-base-content group-hover:text-[#0c833d] relative">
+                            {item.nameBn}
+                            <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#0c833d] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
                         <span className="text-base-content/70">৳{convertToBengaliNumber(item.today)} টাকা/{item.unit}</span>
                         <span className={`font-bold flex items-center gap-0.5 ${item.change.dir === 'up' ? 'text-error' : 'text-[#0c833d]'}`}>
                             <span>{item.change.dir === 'up' ? '▲' : '▼'}</span>
                             <span>{convertToBengaliNumber(item.change.pct)}%</span>
                         </span>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </div>
