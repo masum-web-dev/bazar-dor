@@ -4,6 +4,7 @@ import NavBar from "./components/Navbar";
 import Marque from "./components/Marquee";
 import Footer from "./components/Footer";
 import CategoryNavbar from "./components/CategoryNavbar";
+import { Toaster } from 'react-hot-toast';
 
 
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
         <Marque></Marque>
         <main>
           {children}
+          <Toaster position="top-center" reverseOrder={false} />
         </main>
         <Footer></Footer>
       </body>
