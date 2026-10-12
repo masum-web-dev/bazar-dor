@@ -6,8 +6,11 @@ const client = new MongoClient(process.env.BETTER_AUTH_DB_URL);
 const db = client.db("bazardor");
 
 export const auth = betterAuth({
-    baseURL: "https://bazar-dor-git-main-intelligent-webworks.vercel.app",
-    trustedOrigins: ["https://bazar-dor-git-main-intelligent-webworks.vercel.app"],
+    baseURL: process.env.BETTER_AUTH_URL || "https://bazardors.netlify.app",
+    trustedOrigins: [
+        "https://bazardors.netlify.app",
+        "http://localhost:3000"
+    ],
 
     emailAndPassword: {
         enabled: true,
