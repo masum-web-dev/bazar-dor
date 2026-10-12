@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useSession, signOut } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import { useSession } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
 
 export default function ProfilePage() {
-    const { data: session, isPending } = useSession();
+    const { data: session, isPending, refetch } = useSession();
     const router = useRouter();
-    const [name, setName] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+    const [name, setName] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (session?.user?.name) {
@@ -16,17 +19,39 @@ export default function ProfilePage() {
         }
     }, [session]);
 
-    const handleUpdate = (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
-        setSuccessMessage("তথ্য সফলভাবে আপডেট করা হয়েছে!");
-        setTimeout(() => setSuccessMessage(""), 3000);
+        setLoading(true);
+        setSuccessMessage('');
+        setErrorMessage('');
+
+        try {
+            const { data, error } = await authClient.updateUser({
+                name: name,
+            });
+
+            if (error) {
+                setErrorMessage(error.message || 'নাম আপডেট করতে সমস্যা হয়েছে');
+            } else {
+                setSuccessMessage('তথ্য সফলভাবে আপডেট করা হয়েছে!');
+                if (refetch) {
+                    await refetch();
+                }
+                router.refresh();
+            }
+        } catch (err) {
+            console.error('Update Error:', err);
+            setErrorMessage('কোথাও কোনো সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSignOut = async () => {
-        await signOut({
+        await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    router.push("/sign-in");
+                    router.push('/sign-in');
                 },
             },
         });
@@ -36,18 +61,17 @@ export default function ProfilePage() {
         return <div className="min-h-screen flex items-center justify-center">লোড হচ্ছে...</div>;
     }
 
-    const userName = session?.user?.name || "ব্যবহারকারী";
-    const userEmail = session?.user?.email || "example@gmail.com";
-    const userInitial = userName.charAt(0).toUpperCase();
+    const currentName = session?.user?.name || 'ব্যবহারকারী';
+    const userEmail = session?.user?.email || '';
+    const userInitial = currentName.charAt(0).toUpperCase();
 
     return (
         <div className="min-h-screen bg-stone-50 py-10 px-4 font-sans flex flex-col items-center">
             <div className="w-full max-w-3xl space-y-6">
                 
-                {/* প্রোফাইল হেডার সেকশন */}
                 <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm">
-                    <h1 className="text-2xl font-bold text-stone-900 mb-1">আমার প্রোফাইল[cite: 3]</h1>
-                    <p className="text-sm text-stone-500 mb-6">আপনার অ্যাকাউন্টের তথ্য এখানে দেখুন।[cite: 3]</p>
+                    <h1 className="text-2xl font-bold text-stone-900 mb-1">আমার প্রোফাইল</h1>
+                    <p className="text-sm text-stone-500 mb-6">আপনার অ্যাকাউন্টের তথ্য এখানে দেখুন।</p>
 
                     <div className="flex items-center justify-between p-4 rounded-2xl border border-stone-100 bg-stone-50/50">
                         <div className="flex items-center gap-4">
@@ -55,7 +79,7 @@ export default function ProfilePage() {
                                 {userInitial}
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-stone-900">{userName}</h2>
+                                <h2 className="text-lg font-bold text-stone-900">{currentName}</h2>
                                 <p className="text-sm text-stone-500">{userEmail}</p>
                             </div>
                         </div>
@@ -72,13 +96,18 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
-                {/* তথ্য আপডেট সেকশন */}
                 <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm">
                     <h2 className="text-xl font-bold text-stone-900 mb-6">তথ্য</h2>
 
                     {successMessage && (
                         <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm">
                             {successMessage}
+                        </div>
+                    )}
+
+                    {errorMessage && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
+                            {errorMessage}
                         </div>
                     )}
 
@@ -96,9 +125,10 @@ export default function ProfilePage() {
 
                         <button 
                             type="submit" 
-                            className="w-full bg-[#0c833d] hover:bg-[#0a6c32] text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-md"
+                            disabled={loading}
+                            className="w-full bg-[#0c833d] hover:bg-[#0a6c32] text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-md disabled:opacity-50"
                         >
-                            আপডেট[cite: 3]
+                            {loading ? 'প্রসেসিং হচ্ছে...' : 'আপডেট'}
                         </button>
                     </form>
                 </div>

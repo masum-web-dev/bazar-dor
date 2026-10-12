@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from '@/lib/auth-client';
+import { createAuthClient } from "better-auth/client";
+
+const authClient = createAuthClient();
 
 const SignInPage = () => {
     const router = useRouter();
@@ -31,16 +34,38 @@ const SignInPage = () => {
             console.log("Sign-in Error Data:", error);
 
             if (error) {
-                setErrorMessage(error.message || "সাইন ইন করতে সমস্যা হয়েছে");
+                setErrorMessage(error.message || "সাইন ইন করতে সমস্যা হয়েছে");
             } else {
                 console.log("User successfully signed in!");
                 router.push('/');
             }
         } catch (err) {
             console.error("Catch Error:", err);
-            setErrorMessage("কোথাও কোনো সমস্যা হয়েছে, আবার চেষ্টা করুন।");
+            setErrorMessage("কোথাও কোনো সমস্যা হয়েছে, আবার চেষ্টা করুন।");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await authClient.signIn.social({
+                provider: "google",
+            });
+        } catch (err) {
+            console.error("Google Sign-In Error:", err);
+            setErrorMessage("গুগল দিয়ে সাইন ইন করতে সমস্যা হয়েছে।");
+        }
+    };
+
+    const handleGithubSignIn = async () => {
+        try {
+            await authClient.signIn.social({
+                provider: "github"
+            });
+        } catch (err) {
+            console.error("GitHub Sign-In Error:", err);
+            setErrorMessage("গিথাব দিয়ে সাইন ইন করতে সমস্যা হয়েছে।");
         }
     };
 
@@ -118,12 +143,20 @@ const SignInPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button className="flex items-center justify-center gap-3 w-full border border-stone-200 hover:bg-stone-50 py-3 rounded-xl transition duration-200">
+                    <button 
+                        type="button"
+                        onClick={handleGoogleSignIn}
+                        className="flex items-center justify-center gap-3 w-full border border-stone-200 hover:bg-stone-50 py-3 rounded-xl transition duration-200"
+                    >
                         <img src="https://authjs.dev/img/providers/google.svg" alt="Google" className="h-5 w-5" />
                         <span className="text-sm font-medium text-stone-800">Google দিয়ে চালিয়ে যান</span>
                     </button>
                     
-                    <button className="flex items-center justify-center gap-3 w-full border border-stone-200 hover:bg-stone-50 py-3 rounded-xl transition duration-200">
+                    <button 
+                        type="button"
+                        onClick={handleGithubSignIn}
+                        className="flex items-center justify-center gap-3 w-full border border-stone-200 hover:bg-stone-50 py-3 rounded-xl transition duration-200"
+                    >
                         <img src="https://authjs.dev/img/providers/github.svg" alt="GitHub" className="h-5 w-5" />
                         <span className="text-sm font-medium text-stone-800">GitHub দিয়ে চালিয়ে যান</span>
                     </button>

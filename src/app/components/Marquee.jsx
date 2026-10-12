@@ -1,5 +1,8 @@
-import { Suspense } from "react";
-import Link from "next/link";
+'use client';
+
+import { Suspense, useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const convertToBengaliNumber = (num) => {
     if (num === undefined || num === null) return "";
@@ -10,11 +13,39 @@ const convertToBengaliNumber = (num) => {
     return num.toString().split('').map(char => englishToBengali[char] || char).join('');
 };
 
-async function MarqueeContent() {
-    const res = await fetch("https://api.abcz.workers.dev/api/bazardor/products", {
-        cache: "force-cache",
-    });
-    const marqueeData = await res.json();
+function MarqueeContent() {
+    const [marqueeData, setMarqueeData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { data: session } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        fetch("https://api.abcz.workers.dev/api/bazardor/products", {
+            cache: "force-cache",
+        })
+            .then(res => res.json())
+            .then(data => {
+                setMarqueeData(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, []);
+
+    const handleItemClick = (e, productId) => {
+        e.preventDefault();
+        if (!session) {
+            router.push('/sign-in');
+            return;
+        }
+        router.push(`/products/${productId}`);
+    };
+
+    if (loading) {
+        return <div className="py-2.5 text-center text-sm opacity-70">Loading...</div>;
+    }
 
     return (
         <div className="w-full bg-base-100 border-b border-base-200 py-2.5 overflow-hidden relative">
@@ -34,9 +65,9 @@ async function MarqueeContent() {
             `}</style>
             <div className="animate-custom-marquee">
                 {[...marqueeData, ...marqueeData].map((item, index) => (
-                    <Link 
+                    <div 
                         key={`${item.id}-${index}`} 
-                        href={`/products/${item.id}`}
+                        onClick={(e) => handleItemClick(e, item.id)}
                         className="inline-flex items-center gap-2 px-6 border-r border-base-300 text-sm shrink-0 cursor-pointer group transition-colors"
                     >
                         <span>{item.image || item.categoryIcon || "🛒"}</span>
@@ -49,7 +80,7 @@ async function MarqueeContent() {
                             <span>{item.change.dir === 'up' ? '▲' : '▼'}</span>
                             <span>{convertToBengaliNumber(item.change.pct)}%</span>
                         </span>
-                    </Link>
+                    </div>
                 ))}
             </div>
         </div>

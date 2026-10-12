@@ -1,5 +1,8 @@
-import { Suspense } from "react";
-import Link from "next/link";
+'use client';
+
+import { Suspense, useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const convertToBengaliNumber = (num) => {
     if (num === undefined || num === null) return "";
@@ -10,11 +13,39 @@ const convertToBengaliNumber = (num) => {
     return num.toString().split('').map(char => englishToBengali[char] || char).join('');
 };
 
-async function PriceInCreased() {
-    const res = await fetch("https://api.abcz.workers.dev/api/bazardor/products", {
-        cache: "force-cache",
-    });
-    const products = await res.json();
+function PriceInCreasedContent() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { data: session } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        fetch("https://api.abcz.workers.dev/api/bazardor/products", {
+            cache: "force-cache",
+        })
+            .then(res => res.json())
+            .then(data => {
+                setProducts(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, []);
+
+    const handleProductClick = (e, productId) => {
+        e.preventDefault();
+        if (!session) {
+            router.push('/sign-in');
+            return;
+        }
+        router.push(`/products/${productId}`);
+    };
+
+    if (loading) {
+        return <div className="py-8 text-center text-gray-500">লোড হচ্ছে...</div>;
+    }
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -28,9 +59,9 @@ async function PriceInCreased() {
                         .filter(product => product.change.dir === 'up')
                         .slice(0, 6)
                         .map(product => (
-                            <Link 
+                            <div 
                                 key={product.id}
-                                href={`/products/${product.id}`}
+                                onClick={(e) => handleProductClick(e, product.id)}
                                 className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md cursor-pointer"
                             >
                                 <div className="flex items-center gap-4 mb-4">
@@ -54,7 +85,7 @@ async function PriceInCreased() {
                                         <span>{convertToBengaliNumber(product.change.pct)}%</span>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         ))
                 }
             </div>
@@ -65,7 +96,7 @@ async function PriceInCreased() {
 const PriceInCreasedData = () => {
     return (
         <Suspense fallback={<div className="py-8 text-center text-gray-500">লোড হচ্ছে...</div>}>
-            <PriceInCreased />
+            <PriceInCreasedContent />
         </Suspense>
     );
 };

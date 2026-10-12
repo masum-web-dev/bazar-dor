@@ -1,7 +1,25 @@
-import Link from "next/link";
+'use client';
+
 import Image from "next/image";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+    const { data: session } = useSession();
+    const router = useRouter();
+
+    const handleViewAllClick = (e) => {
+        e.preventDefault();
+        if (!session) {
+            router.push('/sign-in');
+            return;
+        }
+        const element = document.getElementById('all-products');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <div className="w-full bg-[#f4f7f4] py-8 border-b border-base-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -24,12 +42,12 @@ const Hero = () => {
                             চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।
                         </p>
                         <div className="pt-2">
-                            <a
-                                href="#all-products"
-                                className="inline-flex items-center justify-center bg-[#0c833d] hover:bg-[#0a6c32] text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 shadow-sm"
+                            <button
+                                onClick={handleViewAllClick}
+                                className="inline-flex items-center justify-center bg-[#0c833d] hover:bg-[#0a6c32] text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 shadow-sm cursor-pointer"
                             >
                                 সব পণ্য দেখুন
-                            </a>
+                            </button>
                         </div>
                     </div>
 
