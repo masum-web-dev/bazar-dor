@@ -39,16 +39,16 @@ const SignUpPage = () => {
                 name,
                 email,
                 password,
-                callbackURL: "/sign-in",
+                callbackURL: "/", // হোম পেজে রিডাইরেক্ট করার জন্য
             });
 
             if (error) {
                 setErrorMessage(error.message || "সাইন আপ করতে সমস্যা হয়েছে");
                 toast.error(error.message || "সাইন আপ করতে সমস্যা হয়েছে");
             } else {
-                toast.success('সাইন আপ সফল হয়েছে!');
+                toast.success('সাইন আপ সফল হয়েছে!');
                 setTimeout(() => {
-                    router.push('/sign-in');
+                    router.push('/'); // সরাসরি হোম পেজে নিয়ে যাবে
                 }, 1000);
             }
         } catch (err) {
